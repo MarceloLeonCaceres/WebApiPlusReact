@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode
 
 appsettings.json
+api/appsettings.json
 
 ### VisualStudioCode ###
 .vscode/*
