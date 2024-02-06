@@ -46,7 +46,11 @@ namespace api.Repository
 
         public async Task<Stock?> GetByIdAsync(int id)
         {
-            return await _context.Stocks.Include(c => c.Comments).FirstOrDefaultAsync(x => x.Id == id);            
+            return await _context.Stocks.Include(c => c.Comments).FirstOrDefaultAsync(x => x.Id == id);
+        }
+        public async Task<Stock?> GetBySymbolAsync(string symbol)
+        {
+            return await _context.Stocks.FirstOrDefaultAsync(x => x.Symbol == symbol);
         }
         public async Task<Stock> CreateAsync(Stock stockModel)
         {
@@ -89,5 +93,6 @@ namespace api.Repository
         {
             return await _context.Stocks.AnyAsync(s => s.Id == id);
         }
+
     }
 }
