@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using api.Data;
-using api.Dtos;
 using api.Dtos.Stock;
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Repository
@@ -23,18 +17,18 @@ namespace api.Repository
 
         public async Task<List<Stock>> GetAllAsync(QueryObject query)
         {
-            var stocks= _context.Stocks.Include(c => c.Comments).AsQueryable();   
-            if(!string.IsNullOrWhiteSpace(query.CompanyName))
+            var stocks = _context.Stocks.Include(c => c.Comments).ThenInclude(a => a.AppUser).AsQueryable();
+            if (!string.IsNullOrWhiteSpace(query.CompanyName))
             {
                 stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
             }
-            if(!string.IsNullOrWhiteSpace(query.Symbol))
+            if (!string.IsNullOrWhiteSpace(query.Symbol))
             {
                 stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));
             }
-            if(!string.IsNullOrWhiteSpace(query.SortBy))
+            if (!string.IsNullOrWhiteSpace(query.SortBy))
             {
-                if(query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase))
+                if (query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase))
                 {
                     stocks = query.IsDescending ? stocks.OrderByDescending(s => s.Symbol) : stocks.OrderBy(s => s.Symbol);
                 }
@@ -62,7 +56,7 @@ namespace api.Repository
         public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto)
         {
             var existingStock = await _context.Stocks.FirstOrDefaultAsync(x => x.Id == id);
-            if(existingStock == null)
+            if (existingStock == null)
             {
                 return null;
             }
@@ -72,7 +66,7 @@ namespace api.Repository
             existingStock.LastDiv = stockDto.LastDiv;
             existingStock.Industry = stockDto.Industry;
             existingStock.MarketCap = stockDto.MarketCap;
-            
+
             await _context.SaveChangesAsync();
             return existingStock;
         }
@@ -80,7 +74,7 @@ namespace api.Repository
         public async Task<Stock?> DeleteAsync(int id)
         {
             var existingStock = await _context.Stocks.FirstOrDefaultAsync(x => x.Id == id);
-            if(existingStock == null)
+            if (existingStock == null)
             {
                 return null;
             }

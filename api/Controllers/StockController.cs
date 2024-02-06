@@ -1,4 +1,3 @@
-using api.Data;
 using api.Dtos.Stock;
 using api.Helpers;
 using api.Interfaces;
@@ -23,13 +22,13 @@ namespace api.Controllers
         [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             var stocks = await _stockRepo.GetAllAsync(query);
-            var stocksDto = stocks.Select(s => s.ToStockDto());
+            var stocksDto = stocks.Select(s => s.ToStockDto()).ToList();
 
             return Ok(stocksDto);
         }
@@ -37,13 +36,13 @@ namespace api.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             var stock = await _stockRepo.GetByIdAsync(id);
-            if(stock == null)
+            if (stock == null)
             {
                 return NotFound();
             }
@@ -53,7 +52,7 @@ namespace api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto stockDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -67,30 +66,30 @@ namespace api.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             var stockModel = await _stockRepo.UpdateAsync(id, updateDto);
-            if(stockModel == null)
+            if (stockModel == null)
             {
                 return NotFound();
             }
             return Ok(stockModel.ToStockDto());
         }
-        
-        [HttpDelete]        
+
+        [HttpDelete]
         [Route("{id:int}")]
         public async Task<IActionResult> DeleteById([FromRoute] int id)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             var existingStock = await _stockRepo.DeleteAsync(id);
-            if(existingStock == null)   
+            if (existingStock == null)
             {
                 return NotFound();
             }
